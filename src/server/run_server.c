@@ -9,5 +9,13 @@
 
 void run_server(server_t *server)
 {
+    char server_reply[6000];
+	char *msg = "coucou !!!";
+
+	if (send(server->socket_client , msg , strlen(msg) , 0) < 0) {
+		puts("Send failed");
+		return 1;
+	}
+	puts("Data Send\n");
     return;
 }

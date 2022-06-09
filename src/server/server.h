@@ -32,7 +32,8 @@ typedef struct server_s {
 
     int *fd_array;
 
-    int socket;
+    int socket_server;
+    int socket_client;
     int fdmax;
     int port;
 } server_t;
