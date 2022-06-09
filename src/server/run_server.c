@@ -17,5 +17,11 @@ void run_server(server_t *server)
 		return 1;
 	}
 	puts("Data Send\n");
+
+	if (recv(server->socket_client, server_reply , 6000 , 0) < 0) {
+		perror("recv");
+	}
+    printf("Reply received\n");
+	printf("%s\n" ,server_reply);
     return;
 }

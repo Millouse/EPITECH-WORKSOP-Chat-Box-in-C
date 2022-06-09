@@ -16,8 +16,6 @@ server_t *init_server(char *ip_addr, int port)
 
     if (sockfd == -1)
         exit (84);
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
-        exit (84);
     server->ip_addr = ip_addr;
     server->port = port;
     server->addr.sin_addr.s_addr = inet_addr(ip_addr);
