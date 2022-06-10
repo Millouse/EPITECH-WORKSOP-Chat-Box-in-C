@@ -9,19 +9,41 @@
 
 void run_server(server_t *server)
 {
-    char server_reply[6000];
-	char *msg = "coucou !!!";
+	int new_socket, max_sd, sd;
+	int addrlen = sizeof(server->addr);
 
-	if (send(server->socket_client , msg , strlen(msg) , 0) < 0) {
-		puts("Send failed");
-		return 1;
+	server->buffer = malloc(sizeof(char) * 10000);
+    while(true) {
+		if (select(FD_SETSIZE, &server->readfds, &server->writefds,
+            &server->fds, NULL) == -1)
+			exit (84);
+		for (int i = 0; i < FD_SETSIZE; i++) {
+			if (FD_ISSET(i, &server->readfds)) {
+				if (i == server->socket_client) {
+					if ((new_socket = accept(server->socket_client,
+						(struct sockaddr *)&server->addr,
+						(socklen_t *)&addrlen) == -1))
+						exit (83);
+					FD_SET(new_socket, &server->fds);
+					if (new_socket > server->fdmax)
+						server->fdmax = new_socket;
+				} else {
+					if ((sd = recv(i, server->buffer, strlen(server->buffer), 0)) == -1)
+						exit (81);
+					if (sd == 0) {
+						FD_CLR(i, &server->fds);
+						close(i);
+					} else {
+						for (int j = 0; j < FD_SETSIZE; j++) {
+							if (FD_ISSET(j, &server->writefds)) {
+								if (send(j, server->buffer, sd, 0) == -1)
+									exit (82);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
-	puts("Data Send\n");
-
-	if (recv(server->socket_client, server_reply , 6000 , 0) < 0) {
-		perror("recv");
-	}
-    printf("Reply received\n");
-	printf("%s\n" ,server_reply);
     return;
 }

@@ -36,6 +36,8 @@ typedef struct server_s {
     int socket_client;
     int fdmax;
     int port;
+
+    char *buffer;
 } server_t;
 
 int error_handling(int ac, char *port);
